@@ -85,6 +85,11 @@ class ListOrItemField(WritableField):
         self.item_field = item_field
         self.list_field = ListField(item_field)
 
+    def initialize(self, parent, field_name):
+        if self.item_field:
+            self.item_field.initialize(parent, field_name)
+        self.list_field.initialize(parent, field_name)
+
     def to_native(self, obj):
         if isinstance(obj, list):
             return self.list_field.to_native(obj)
@@ -99,13 +104,18 @@ class ListOrItemField(WritableField):
             return self.item_field.from_native(data)
         return data
 
+    def field_from_native(self, data, files, field_name, into):
+        if isinstance(data, list):
+            return self.list_field.field_from_native(data, files, field_name, into)
+        elif self.item_field:
+            return self.item_field.field_from_native(data, files, field_name, into)
+
     def validate(self, value):
         super(ListOrItemField, self).validate(value)
         if isinstance(value, list):
             self.list_field.validate(value)
         elif self.item_field:
             self.item_field.run_validators(value)
-            self.item_field.validate(value)
 
 
 class DictField(WritableField):
