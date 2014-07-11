@@ -115,6 +115,13 @@ class ListOrItemField(WritableField):
         if isinstance(value, list):
             self.list_field.validate(value)
         elif self.item_field:
+            self.item_field.validate(value)
+
+    def run_validators(self, value):
+        super(ListOrItemField, self).run_validators(value)
+        if isinstance(value, list):
+            self.list_field.run_validators(value)
+        elif self.item_field:
             self.item_field.run_validators(value)
 
 

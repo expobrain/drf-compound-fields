@@ -85,7 +85,7 @@ def test_invalid_item():
     """
     field = ListOrItemField(CharField(max_length=5))
     with pytest.raises(ValidationError):
-        field.validate('123456')
+        field.run_validators('123456')
 
 
 def test_list_value_invalid_items():
